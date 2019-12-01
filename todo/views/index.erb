@@ -1,0 +1,21 @@
+<div>
+  <div>
+    <div>
+      <table>
+        <thead>
+         <tr>
+          <th>タイトル</th>
+         </tr>
+       </thead>
+          <tbody>
+			      <% @tasks.each do |task| %>
+			        <tr>
+               <td><%= task.title %></td>
+			        </tr>
+		        <% end %>
+		         <tr><td colspan="6"><a href="/tasks/new">新しいtodo</a></td></tr>
+			    </tbody>
+			   </table>
+    </div>
+  </div>
+</div>
