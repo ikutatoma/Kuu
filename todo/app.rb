@@ -13,18 +13,17 @@ helpers do
   end
 end
 
-before'/tasks' do
+before '/tasks' do
   if current_user.nil?
     redirect '/'
   end
 end
-
 get '/' do
-if current_user.nil?
-  @task = Task.none
-else
-  @tasks= current_user.tasks
-end
+  if current_user.nil?
+    @tasks = Task.none
+  else
+    @tasks = current_user.tasks
+  end
   erb :index
 end
 
@@ -32,31 +31,29 @@ get '/signup' do
   erb :sign_up
 end
 
-
 post '/signup' do
   user = User.create(
-     name: params[:name],
-     password: params[:password],
-     password_confirmation: params[:password_confirmation]
+    name: params[:name],
+    password: params[:password],
+    password_confirmation: params[:password_confirmation]
   )
- if user.persisted?
-   session[:user] = user.id
-end
- redirect '/'
+  if user.persisted?
+      session[:user] = user.id
+  end
+  redirect '/'
 end
 
 get '/signin' do
   erb :sign_in
 end
 
-post '/signin'  do
+post  '/signin' do
   user = User.find_by(name: params[:name])
   if user && user.authenticate(params[:password])
     session[:user] = user.id
   end
   redirect '/'
 end
-
 
 get '/signout' do
   session[:user] = nil
@@ -68,6 +65,26 @@ get '/tasks/new' do
 end
 
 post '/tasks' do
-  current_user.tasks.create(title: params[:title])
+  date = params[:due_date].split('-')
+  if Date.valid_date?(date[0].to_i, date[1].to_i, date[2].to_i)
+    current_user.tasks.create(title: params[:title],
+    due_date: Date.parse(params[:due_date]))
+    redirect '/'
+  else
+    redirect 'tasks/new'
+  end
+end
+
+post '/tasks/:id/done' do
+  task = Task.find(params[:id])
+  task.completed = true
+  task.save
   redirect '/'
+end
+
+get '/tasks/:id/star' do
+    task = Task.find(params[:id])
+    task.star = !task.star
+    task.save
+    redirect '/'
 end
