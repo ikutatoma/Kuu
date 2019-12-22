@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
 end
 
 class Task < ActiveRecord::Base
-   scope :due_over, -> {where('due_date < ?',Date.today).where(completed: [nil, false])}
+   scope  :due_over, -> {where('due_date < ?',Date.today).where(completed: [nil, false])}
   scope :had_by, -> (user) {where(user_id: user.id)}
 
   validates :title,

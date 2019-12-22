@@ -132,3 +132,21 @@ get '/tasks/done' do
   @tasks = current_user.tasks.where(completed: true)
   erb :index
 end
+
+get '/list/new' do
+  erb :list
+end
+
+post '/list/new' do
+   list = List.create(
+    name: params[:topic],
+  )
+  list.save
+  redirect '/'
+end
+
+post '/list/delete' do
+  list = List.find(params[:id])
+  list.destroy
+  redirect '/'
+end
