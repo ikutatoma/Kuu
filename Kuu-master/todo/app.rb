@@ -107,7 +107,7 @@ end
 
 post '/tasks/:id' do
   task = Task.find(params[:id])
-  list = List.find(params[:list])
+  list = List.find_by_id(params[:list])
   date = params[:due_date].split('-')
 
   if Date.valid_date?(date[0].to_i, date[1].to_i, date[2].to_i,)
@@ -129,6 +129,6 @@ end
 
 get '/tasks/done' do
   @lists = List.all
-  @tasks = current_user.tasks.due_over
+  @tasks = current_user.tasks.where(completed: true)
   erb :index
 end

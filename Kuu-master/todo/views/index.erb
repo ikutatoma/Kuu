@@ -2,13 +2,17 @@
 	<div class="row">
 		<div class="col-lg-2">
 				<ul class="list-group">
-					<%= erb :_count_due, locals: {title: "top",url: "/", tasks: Task.all} %>
-					<li class="list-group-item"><a href="/tasks/done">done</a></li>
+					<%= erb :_count_all, locals: {title: "top",url: "/", tasks: Task.all} %>
+
+						<%= erb :_count_all, locals: {title: "done",url: "/tasks/done", tasks: Task.where(completed: true)} %>
+
 					<%= erb :_count_due, locals: {title: "締め切り過ぎた", url: "/tasks/over", tasks: Task.all} %>
+
 					<% @lists.each do |list| %>
-						<%= erb :_count_due, locals: {title: list.name, url: "/?list=#{list.id}", tasks: list.tasks} %>
+						<%= erb :_count_all, locals: {title: list.name, url: "/?list=#{list.id}", tasks: list.tasks} %>
 					<% end %>
 				</ul>
+
 			<div class="col-lg-10">
 				<table class="table-striped table-bordered table-hover">
 					<thead>
