@@ -13,6 +13,7 @@
 					<% end %>
 				</ul>
 
+
 			<div class="col-lg-10">
 				<table class="table-striped table-bordered table-hover">
 					<thead>
@@ -54,6 +55,8 @@
 											今日締切
 										<% elsif task.remained_days < 7 %>
 											締切近い
+								  	<% elsif task.remained_days >= 7 %>
+											まだ大丈夫
 										<% end %>
 									<% end %>
 								</td>
@@ -73,7 +76,7 @@
 							</tr>
 						<% end %>
 							<tr><td colspan="6"><a href="/tasks/new">新しいtodo</a></td></tr>
-							<tr><td colspan="6"><a href="/list/new">リストを追加する</a></td></tr>
+							<tr><td colspan="6"><a href="/lists/new">リストを追加する</a></td></tr>
 					</tbody>
 				</table>
 			</div>

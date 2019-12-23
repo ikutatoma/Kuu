@@ -133,11 +133,11 @@ get '/tasks/done' do
   erb :index
 end
 
-get '/list/new' do
+get '/lists/new' do
   erb :list
 end
 
-post '/list/new' do
+post '/lists/new' do
    list = List.create(
     name: params[:topic],
   )
@@ -145,7 +145,8 @@ post '/list/new' do
   redirect '/'
 end
 
-post '/list/delete' do
+
+post '/lists/:id/delete' do
   list = List.find(params[:id])
   list.destroy
   redirect '/'
