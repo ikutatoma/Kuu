@@ -18,11 +18,15 @@ before '/tasks' do
     redirect '/'
   end
 end
+
 get '/' do
-  if current_user.nil?
+  @lists = List.all
+  if current_user.nil? then
     @tasks = Task.none
-  else
+  elsif params[:list].nil? then
     @tasks = current_user.tasks
+  else
+    @tasks = List.find(params[:list]).tasks.where(user_id: current_user.id)
   end
   erb :index
 end
@@ -65,13 +69,14 @@ get '/tasks/new' do
 end
 
 post '/tasks' do
-  date = params[:due_date].split('-')
-  if Date.valid_date?(date[0].to_i, date[1].to_i, date[2].to_i)
-    current_user.tasks.create(title: params[:title],
-    due_date: Date.parse(params[:due_date]))
-    redirect '/'
+  date = params[:due_date].split('-')
+  list = List.find(params[:list])
+  if(Date.valid_date?(date[0].to_i, date[1].to_i, date[2].to_i))
+    current_user.tasks.create!(title: params[:title],
+    due_date: Date.parse(params[:due_date]),list_id: list.id)
+    redirect '/'
   else
-    redirect 'tasks/new'
+    redirect 'tasks/new'
   end
 end
 
@@ -83,8 +88,65 @@ post '/tasks/:id/done' do
 end
 
 get '/tasks/:id/star' do
-    task = Task.find(params[:id])
-    task.star = !task.star
+  task = Task.find(params[:id])
+  task.star = !task.star
+  task.save
+  redirect '/'
+end
+
+post '/tasks/:id/delete' do
+  task = Task.find(params[:id])
+  task.destroy
+  redirect '/'
+end
+
+get '/tasks/:id/edit' do
+  @task = Task.find(params[:id])
+  erb :edit
+end
+
+post '/tasks/:id' do
+  task = Task.find(params[:id])
+  list = List.find_by_id(params[:list])
+  date = params[:due_date].split('-')
+
+  if Date.valid_date?(date[0].to_i, date[1].to_i, date[2].to_i,)
+    task.title = CGI.escapeHTML(params[:title])
+    task.due_date = Date.parse(params[:due_date])
+    task.list_id = list.id
     task.save
     redirect '/'
+  else
+      redirect "tasks/#{task.id}/edit"
+  end
+end
+
+get '/tasks/over' do
+  @lists = List.all
+  @tasks = current_user.tasks.where('due_date < ?',Date.today).where(completed: [nil, false])
+  erb :index
+end
+
+get '/tasks/done' do
+  @lists = List.all
+  @tasks = current_user.tasks.where(completed: true)
+  erb :index
+end
+
+get '/lists/new' do
+  erb :list
+end
+
+post '/lists/new' do
+   list = List.create(
+    name: params[:topic],
+  )
+  list.save
+  redirect '/'
+end
+
+post '/lists/:id/delete' do
+  list = List.find(params[:id])
+  list.destroy
+  redirect '/'
 end
